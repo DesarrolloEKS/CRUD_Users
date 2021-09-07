@@ -1,72 +1,95 @@
 <template>
   <v-app>
-    <v-card height="550">
-    <v-navigation-drawer
-      absolute
-      permanent
-      letf
-    >
-      <template v-slot:prepend>
-        <v-list-item two-line>
-          <v-list-item-content>
-            <v-list-item-title>
-              <v-avatar color="pink lighten-5" size="27"> <!--color y tamaño de circulo-->
-                <span class="blue-grey--text text-h6">S</span> <!--color, tamaño y texto dentro del circulo-->
-              </v-avatar>
-              Service
-            </v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-      </template>
+    <v-card>
+      <v-navigation-drawer
+        absolute
+        app
+        permanent
+        letf
+        width="210px"
+      >
+        <template v-slot:prepend>
+          <v-list-item two-line>
+            <v-list-item-content>
+              <v-list-item-title>
+                <v-avatar color="pink lighten-5" size="27"> <!--color y tamaño de circulo-->
+                  <span class="blue-grey--text text-h6">S</span> <!--color, tamaño y texto dentro del circulo-->
+                </v-avatar>
+                Service
+              </v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+        </template>
 
-      <v-divider></v-divider>
+        <v-divider>
+        </v-divider>
 
-      <v-list dense>
-        <v-list-item
-          v-for="item in items"
-          :key="item.title"
-        >
-          <v-list-item-icon> <!--muestra los iconos-->
-            <v-icon>{{ item.icon }}</v-icon>
-          </v-list-item-icon>
+        <v-list class="three">
+          <v-list-item @click="openItem(Users.vue)">
+            <v-list-item-icon>
+              <v-icon>
+                mdi-account-group-outline
+              </v-icon>
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title>Users</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
 
-          <v-list-item-content>
-            <v-list-item-title>{{ item.title }}</v-list-item-title> <!--muestra el texto al lado de los iconos-->
-          </v-list-item-content>
-        </v-list-item>
-      </v-list>
+          <v-list-item inset="35px">
+            <v-list-item-icon>
+              <v-icon>
+                mdi-email-outline
+              </v-icon>
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title>Help & Support</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+
+          <v-list-item>
+            <v-list-item-icon>
+              <v-icon>
+                mdi-cog-outline
+              </v-icon>
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title>Settings</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+
+          <v-list-item>
+            <v-list-item-icon>
+              <v-icon>
+                mdi-logout
+              </v-icon>
+            </v-list-item-icon>
+            <v-list-item-content>
+              <v-list-item-title>logout</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+        </v-list>
       
-    </v-navigation-drawer>
-  </v-card>
+      </v-navigation-drawer>
 
-    <v-main>
-      <HelloWorld/>
+
+      <v-main>
+      <Users/>
     </v-main>
+    </v-card>
+
+    
   </v-app>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld';
+import Users from './components/Users.vue';
 
 export default {
   name: 'App',
 
   components: {
-    HelloWorld,
+    Users
   },
-
-  data () {
-      return {
-        items: [
-
-          { title: 'Users', icon: 'mdi-account-group-outline' },
-          
-          
-          { title: 'Help & Support', icon: 'mdi-email-outline' },
-          { title: 'Settings', icon: 'mdi-cog-outline' },
-          { title: 'Logout', icon: 'mdi-logout' },
-        ],
-      }
-    },
 };
 </script>
