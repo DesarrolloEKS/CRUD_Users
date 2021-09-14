@@ -11,7 +11,7 @@
         <template v-slot:prepend>
           <v-list-item two-line>
             <v-list-item-content>
-              <v-list-item-title>
+              <v-list-item-title class="font-weight-medium">
                 <v-avatar color="pink lighten-5" size="27"> <!--color y tamaño de circulo-->
                   <span class="blue-grey--text text-h6">S</span> <!--color, tamaño y texto dentro del circulo-->
                 </v-avatar>
@@ -36,7 +36,7 @@
             </v-list-item-content>
           </v-list-item>
 
-          <v-list-item inset="35px">
+          <v-list-item style="top: 390px">
             <v-list-item-icon>
               <v-icon>
                 mdi-email-outline
@@ -47,7 +47,7 @@
             </v-list-item-content>
           </v-list-item>
 
-          <v-list-item>
+          <v-list-item style="top: 370px;">
             <v-list-item-icon>
               <v-icon>
                 mdi-cog-outline
@@ -58,9 +58,9 @@
             </v-list-item-content>
           </v-list-item>
 
-          <v-list-item>
+          <v-list-item style="top: 350px;">
             <v-list-item-icon>
-              <v-icon>
+              <v-icon >
                 mdi-logout
               </v-icon>
             </v-list-item-icon>

@@ -1,45 +1,81 @@
 <template>
   <v-app>
-    <v-dialog v-model="dialog" persistent width="500">
-        <template v-slot:activator="{ on }">
-          <v-btn top class="mb-2" color="primary" dark v-on="on" width="150" @click="postUsers">Nuevo usuario</v-btn>
-        </template>
-        <v-card>
-          <v-card-title>
-            <span class="headline">{{formTitle}}</span>
-          </v-card-title>
+    <template>
+      <v-banner single-line>
+        <v-toolbar flat>
+          <v-toolbar-title class="font-weight-black">Usuarios</v-toolbar-title>
+          <v-divider class="mx-4" vertical></v-divider>
+          <v-spacer></v-spacer>
+          <v-dialog v-model="dialog" persistent width="500"> <!--Aquí se declara el dialogo de nuevo usuario-->
+            <template v-slot:activator="{ on }">
+              <v-btn class="mb-7" color="green" dark v-on="on" style="margin-top: 30px" width="150" @click="postUsers">Nuevo usuario</v-btn> <!--Botón-->
+            </template>
+            <v-card>
+              <v-card-title>
+                {{formTitle}} usuario
+              </v-card-title>
 
-          <v-card-text>
-            <v-container grid-list-md>
-              <v-layout wrap>
-                <v-flex xs12 sm6 md4>
-                  <v-text-field v-model="form.nombre_usuario" label="*Nombre" required></v-text-field>
-                </v-flex>
-                <v-flex xs12 sm6 md4>
-                  <v-text-field v-model="form.email" label="*Correo" hint="ejemplo: alguien@gmail.com"></v-text-field>
-                </v-flex>
-              </v-layout>
-            </v-container>
-            <small>*Indica todos los campos</small>
-          </v-card-text>
-          <v-card-actions>
-            <v-spacer></v-spacer>
-            <v-btn color="blue darken-1" text @click="close">Cerrar</v-btn>
-            <v-btn color="blue darken-1" text @click="save">Guardar</v-btn>
-          </v-card-actions>
-        </v-card>
-    </v-dialog>
+              <v-card-text>
+                <v-container grid-list-md>
+                  <v-layout wrap>
+                    <v-flex xs12 sm6 md4>
+                      <v-text-field v-model="form.nombre_usuario" label="*Nombre" required></v-text-field>
+                    </v-flex>
+                    <v-flex xs12 sm6 md4>
+                      <v-text-field v-model="form.email" label="*Correo" hint="ejemplo: alguien@gmail.com"></v-text-field>
+                    </v-flex>
+                  </v-layout>
+                </v-container>
+                <small>*Indica todos los campos</small>
+              </v-card-text>
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn color="blue darken-1" text @click="close">Cerrar</v-btn>
+                <v-btn color="blue darken-1" text @click="save" :loading="loadingAPi">Guardar</v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
+        </v-toolbar>
+      </v-banner>
+    </template>
 
+    <template>
+      <v-banner single-line>
+        <v-toolbar flat>
+          <v-text-field style="padding: 0;"
+          v-model="search"
+          dense
+          clearable
+          flat solo outlined hide-details
+          prepend-inner-icon="mdi-magnify"
+          label="Search">
+          </v-text-field>
+          <v-select
+          :items="headers"
+          style="margin-top: 24px;"
+          label="Fecha de creación"
+          auto-select-first
+          dense
+          filled
+          rounded
+          solo>
+          </v-select>
+        </v-toolbar>
+      </v-banner>
+    </template>
+
+    <v-divider ></v-divider>
+    
+    <v-banner>
     <v-row justify="center">
-      
-
       <v-data-table
         :headers="headers"
         :items="users"
+        :search="search"
         :items-per-page="5"
         class="lighten-5 px-3"
       >
-        <v-dialog v-model="dialogDel" max-width="500px">
+        <!--<v-dialog v-model="dialogDel" max-width="500px">
       <v-card>
         <v-card-title class="text-h5">¿Está seguro de eliminar este usuario?</v-card-title>
         <v-card-actions>
@@ -49,23 +85,25 @@
           <v-spacer></v-spacer>
         </v-card-actions>
       </v-card>
-    </v-dialog>
+    </v-dialog>-->
 
         <template v-slot:item.actions="{item}">
           <v-icon small class="mr-2" @click="updateClick(item)">
             mdi-pencil
           </v-icon>
-          <v-icon small @click="delUsers()">
+          <v-icon small @click="delUsers(item)">
             mdi-delete
           </v-icon>
       </template>
       </v-data-table>
     </v-row>
+    </v-banner>
   </v-app>
 </template>
 
 <script>
   import axios from "axios";
+  //import { set } from 'vue/types/umd';
 
   export default {
     
@@ -73,8 +111,10 @@
 
     data: () => ({
       dialog: false,
-      dialogDel: false,
-
+      loadingAPi: false,
+      //dialogDel: false,
+      formTitle: "Nuevo",
+      search: '',
       headers: [
           {
             text: 'Nombre',
@@ -89,31 +129,30 @@
 
       editedIndex: -1,
       form: {
-        "nombre_usuario" : "",
-        "email" : "",
+        //userss:[],
+        nombre_usuario: "",
+        email: "",
       },
-      /*defaultForm: {
+      defaultForm: {
         nombre_usuario: '',
         email: '',
-        id_usuario: ''
-      },*/
+      },
 
       users: []
     }),
 
     computed:{
-      formTitle (){
+      formTitles (){
         return this.editedIndex === -1 ? 'Nuevo usuario' : 'Editar usuario'
       }
     },
 
     watch: {
-      dialog (val) {
-        val || this.close
-      },
-      dialogDel (val) {
-        val || this.close
-      }
+     /* dialog (val, new_value) {
+        val || this.close()
+        /*if(!val) return
+        setTimeout(() => (this.dialog = false), 4000)*-/
+      }*/
     },
 
 
@@ -121,7 +160,7 @@
       this.getUsers();
     },
     methods:{
-      getUsers(){
+      getUsers(){ //metodo para mostrar datos de la base de datos
         axios
         .get("http://localhost/Service_Users/index.php/item")
         .then((response) => {
@@ -135,52 +174,33 @@
       },
 
       postUsers(){
+        this.formTitle = "Nuevo";
         this.nombre_usuario="";
         this.email="";
-        /*axios
-        .post("http://localhost/Service_Users/index.php/item/1", this.form, { "Access-Control-Allow-Origin": "*" })
-        .then((data) => {
-          console.log(data);
-          this.users.push({
-            id_usuario: + new Date(),
-            nombre_usuario: this.nombre_usuario,
-            email: this.email
-          })
-          /*this.editedIndex = this.users.indexOf(item)
-          this.form = Object.assign({}, data)
-          this.dialog = true
-        });*/
       },
  
       putUsers(dep){
-        this.formTitle="Editar usuario";
         this.nombre_usuario=dep.nombre_usuario;
         this.email=dep.email;
-        /*axios
-        .put("http://localhost/Service_Users/index.php/item", this.form)
-        .then((response) => {
-          console.log(response);
-        })*/
       },
 
       delUsers(){
+        /*const index = this.users.indexOf(item)
+        confirm('¿Estás seguro de querer eliminar?') && this.users.splice(index, 1)
+        confirm('El usuario se ha eliminado exisotamente')*/
         if(!confirm("¿Estás seguro?")){
           return;
         }
-        axios.delete("http://localhost/Service_Users/index.php/item/6")
-        .then((response) => {
-          this.getUsers();
-          alert(response.data);
+          axios.delete("http://localhost/Service_Users/index.php/item/" + this.form.id_usuario)
+          .then((response) => {
+            this.getUsers();
+           console.log(response.data);
+           this.close();
         })
-        /*const index = this.users.indexOf(id_usuario)
-        if (confirm('¿Estás seguro de eliminar este usuario?') ){
-          axios
-          .delete("http://localhost/Service_Users/index.php/item/1")
-          .then(() => {
-            this.users.splice(index, 1)
-          });
+        /*const respuesta = confirm('¿Estás seguro?') && this.form.splice(index, 1)
+        if(respuesta){
+          axios.delete("http://localhost/Service_Users/index.php/item/${nombre_usuario}", this.form);
         }*/
-        
       },
 
       close() {
@@ -188,60 +208,54 @@
         setTimeout(() => {
           this.form = Object.assign({}, this.defaultForm)
           this.editedIndex = -1
-        }, 300)
+        }, 300);
+        this.loadingAPi = false;
       },
 
       save(){
-        /*console.log(this.post)*/
-        axios.post("http://localhost/Service_Users/index.php/item?="+ this.nombre_usuario + this.email + this.form, {
-          nombre_usuario: this.nombre_usuario,
-          email: this.email
-        })
-        .then((response) => {
-          this.getUsers();
-          alert(response.data);
-        })
-        /*if (this.editedIndex > -1) {
-          Object.assign(this.users[axios
-        .post("http://localhost/Service_Users/index.php/item/1", this.form)], this.id_usuario)
-          }
-          else {
-            this.users.push(this.form)
-          }
-          this.close()
-        }
-        /*axios
-        .post("http://localhost/Service_Users/index.php/item/1", this.form, { "Access-Control-Allow-Origin": "*" })
-        .then((response) => {
-          console.log(response.data)
-          if (this.editedIndex > -1) {
-          Object.assign(this.users[this.response.data], this.form)
-          }
-          else {
-            this.users.push(this.form)
-          }
-          this.close()
-        });*/
-        /*if (this.editedIndex > -1) {
-          Object.assign(this.users[this.form], console.log(this.postUsers))
-        }
-        else {
-          this.users.push(this.form)
-        }
-        this.close()*/
+        this.loadingAPi = true;
+        setTimeout(() => {
+          this.loadingAPi = false
+        },3000)
 
-        /*this.form.id_usuario = localStorage.getItem(id_usuario);
-        axios.post("http://localhost/Service_Users/index.php/item/1", this.form)
-        .then(data => {
-          console.log(data);
-          this.make
-        })*/
-        
+        if(this.formTitle == "Nuevo"){
+          this.addUser();
+        }
+        if(this.formTitle == "Editar"){
+          //Metodo editar
+          this.modUser();
+        }
       },
-      updateClick(user){
-          console.log(user);
+      addUser(){
+        var bodyFormData = new FormData();
+        bodyFormData.append('email', this.form.email);
+        bodyFormData.append('nombre_usuario', this.form.nombre_usuario);
+
+        axios.post("http://localhost/Service_Users/index.php/item/usuarios", bodyFormData)
+        .then((response) => {
+          //Validarcion
+           this.getUsers();
+           console.log(response.data);
+           this.close();
+        });
+      },
+
+      modUser(){
+        axios.put("http://localhost/Service_Users/index.php/item/" + this.form.id_usuario, this.form)
+        .then((response) => {
+          //Validacion
+           this.getUsers({data: response.data});
+           console.log(response.data);
+           this.close();
+        });
+      },
+
+      updateClick(item){
+        
+        this.formTitle = "Editar";
+          console.log(item);
           this.dialog = true;
-          this.form = user;
+          this.form = item;
         }
     }
   }
