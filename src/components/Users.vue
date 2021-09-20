@@ -1,14 +1,14 @@
 <template>
   <v-app>
     <template>
-      <v-banner single-line>
-        <v-toolbar flat>
-          <v-toolbar-title class="font-weight-black">Usuarios</v-toolbar-title>
+      <v-banner single-line color="blue-grey lighten-5">
+        <v-toolbar flat color="blue-grey lighten-5">
+          <v-toolbar-title class="font-weight-black">Usuarios</v-toolbar-title> <!--Titulo-->
           <v-divider class="mx-4" vertical></v-divider>
           <v-spacer></v-spacer>
           <v-dialog v-model="dialog" persistent width="500"> <!--Aquí se declara el dialogo de nuevo usuario-->
             <template v-slot:activator="{ on }">
-              <v-btn class="mb-7" color="green" dark v-on="on" style="margin-top: 30px" width="150" @click="postUsers">Nuevo usuario</v-btn> <!--Botón-->
+              <v-btn class="mb-7" color="green" dark v-on="on" style="margin-top: 30px" width="150" @click="postUsers">Nuevo usuario</v-btn> <!--Botón para agregar usuario-->
             </template>
             <v-card>
               <v-card-title>
@@ -40,26 +40,34 @@
     </template>
 
     <template>
-      <v-banner single-line>
-        <v-toolbar flat>
-          <v-text-field style="padding: 0;"
-          v-model="search"
-          dense
-          clearable
-          flat solo outlined hide-details
-          prepend-inner-icon="mdi-magnify"
-          label="Search">
-          </v-text-field>
-          <v-select
-          :items="headers"
-          style="margin-top: 24px;"
-          label="Fecha de creación"
-          auto-select-first
-          dense
-          filled
-          rounded
-          solo>
-          </v-select>
+      <v-banner single-line color="blue-grey lighten-5">
+        <v-toolbar flat color="blue-grey lighten-5">
+          <v-row>
+            <v-col sm="9" md="4">
+              <v-text-field style="padding: 0; margin-top: 2px;"
+              v-model="search"
+              dense
+              clearable
+              flat solo outlined hide-details
+              prepend-inner-icon="mdi-magnify"
+              label="Search">
+              </v-text-field>
+            </v-col>
+            <!--<v-spacer><v-divider vertical></v-divider></v-spacer>
+            <v-col cols="12" sm="6" md="8">
+              <v-select
+              v-model="use"
+              style="margin-top: 24px; margin-right: 400px;"
+              label="Fecha de creación"
+              prepend-inner-icon="mdi-calendar"
+              auto-select-first
+              dense
+              filled
+              rounded
+              solo>
+              </v-select>
+            </v-col>-->
+          </v-row>
         </v-toolbar>
       </v-banner>
     </template>
@@ -67,13 +75,13 @@
     <v-divider ></v-divider>
     
     <v-banner>
-    <v-row justify="center">
+    <!--<v-row justify="center">  :use="use"-->
       <v-data-table
         :headers="headers"
         :items="users"
         :search="search"
         :items-per-page="5"
-        class="lighten-5 px-3"
+        class="elevation-1"
       >
         <!--<v-dialog v-model="dialogDel" max-width="500px">
       <v-card>
@@ -96,7 +104,7 @@
           </v-icon>
       </template>
       </v-data-table>
-    </v-row>
+    <!--</v-row>-->
     </v-banner>
   </v-app>
 </template>
@@ -123,6 +131,7 @@
             value: 'nombre_usuario',
           },
           { text: 'Correo', value:'email'},
+          { text: 'Fecha de creación', value: 'create_date'},
           { text: 'Acciones', value: 'actions', sortable: false},
       ],
       desserts: [],
