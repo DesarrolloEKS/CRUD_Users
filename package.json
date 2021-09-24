@@ -12,6 +12,7 @@
     "core-js": "^3.6.5",
     "flat-cache": "^3.0.4",
     "vue": "^2.6.11",
+    "vue-router": "^3.5.2",
     "vuetify": "^2.5.8"
   },
   "devDependencies": {
